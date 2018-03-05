@@ -20,6 +20,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,13 @@ import android.widget.Toast;
 
 import com.example.android.common.logger.Log;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */
@@ -60,6 +68,7 @@ public class BluetoothChatFragment extends Fragment {
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
+    private Button mEnableButton;
 
     /**
      * Name of the connected device
@@ -150,7 +159,57 @@ public class BluetoothChatFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
+        mEnableButton = (Button) view.findViewById(R.id.button_enableApp);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mSendButton.setVisibility(view.GONE);
+    }
+
+    private void newPassCode(String newPasscode){
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().
+                    openFileOutput("passcode.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(newPasscode);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private boolean verifyPassCode(String passCode){
+        Context context = getActivity();
+        try {
+            InputStream inputStream = context.openFileInput("passcode.txt");
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                String ret = stringBuilder.toString();
+                System.out.println(ret);
+                return passCode.equals(ret);
+            }
+        } catch (FileNotFoundException e) {
+            newPassCode(passCode);
+            System.out.println("PassCode Created");
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    private void exitApp(){
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
@@ -176,9 +235,28 @@ public class BluetoothChatFragment extends Fragment {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
                     sendMessage(message);
+                    textView.setText("");
                 }
             }
         });
+
+        mEnableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = getView();
+                if (null != view) {
+                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+                    String passcode = textView.getText().toString();
+                    if(verifyPassCode(passcode)){
+                        mEnableButton.setVisibility(View.GONE);
+                        mSendButton.setVisibility(View.VISIBLE);
+                        textView.setText("");
+                    }else exitApp();
+                }
+            }
+        });
+
+
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
