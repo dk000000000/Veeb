@@ -1,4 +1,0 @@
-#Mon Feb 19 17:47:42 EST 2018
-base.0=F\:\\Veeb\\Application\\build\\intermediates\\transforms\\dexMerger\\debug\\0
-path.0=classes.dex
-renamed.0=classes.dex
