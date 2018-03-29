@@ -1,5 +1,5 @@
 
-Android BluetoothChat Sample
+Veeb
 ===================================
 
 This sample shows how to implement two-way text chat over Bluetooth between two Android devices, using
