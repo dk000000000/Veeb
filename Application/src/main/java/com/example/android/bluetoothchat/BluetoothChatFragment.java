@@ -259,11 +259,19 @@ public class BluetoothChatFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     down = System.currentTimeMillis();
+                    
+                    View view = getView();
+                    if (null != view) {
+                      TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+                      String message = mEncoder.encode(textView.getText().toString());
+                      sendMessage(message);
+                      textView.setText("");
+                    }
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
                     duration = System.currentTimeMillis() - down;
                     mConversationArrayAdapter.add("duration " + Long.toString(duration));
-                    String message = mEncoder.encode(Long.toString(duration));
+                    String message = Long.toString(duration);
                     sendMessage(message);
                 }
                 return true;
