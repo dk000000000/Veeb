@@ -41,6 +41,13 @@
 
         <Button
             android:id="@+id/button_send"
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send" />
+
+        <Button
+            android:id="@+id/button_vibrate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send" />
