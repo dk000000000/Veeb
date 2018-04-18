@@ -10,7 +10,7 @@ public class Constants {
 
     public static final String AUDIO_WAV_MORSECODE_SHORT_PATH = "sfx/short.wav";
     public static final String AUDIO_WAV_MORSECODE_LONG_PATH = "sfx/long.wav";
-    public static final String MORSECODE_CONTENT_XML_PATH = "xml/morsecode.xml";
+    public static final String MORSECODE_CONTENT_XML_PATH = "./morsecode.xml";
 
     public static final String ERROR_STRING = "[undefined]";
 }
