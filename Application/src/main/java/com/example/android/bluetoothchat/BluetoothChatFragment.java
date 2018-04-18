@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,9 +45,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.os.Build;
 
 import com.example.android.common.logger.Log;
+import com.example.android.common.morsecoder.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -76,6 +78,10 @@ public class BluetoothChatFragment extends Fragment {
     // Vibration duration
     long down;
     long duration;
+
+    //Morse Code translation;
+    private static Encoder mEncoder = new Encoder();
+    private static Decoder mDecoder = new Decoder();
 
     /**
      * Name of the connected device
@@ -257,7 +263,7 @@ public class BluetoothChatFragment extends Fragment {
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
                     duration = System.currentTimeMillis() - down;
                     mConversationArrayAdapter.add("duration " + Long.toString(duration));
-                    String message = Long.toString(duration);
+                    String message = mEncoder.encode(Long.toString(duration));
                     sendMessage(message);
                 }
                 return true;
@@ -381,6 +387,7 @@ public class BluetoothChatFragment extends Fragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
             Context context = getActivity();
             FragmentActivity activity = getActivity();
             switch (msg.what) {
@@ -411,9 +418,15 @@ public class BluetoothChatFragment extends Fragment {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(Long.parseLong(readMessage));
+                    if (Build.VERSION.SDK_INT < 26) {
+                        v.vibrate(mDecoder.decode(readMessage),-1);
+                    }
+                    else{
+                        v.vibrate(VibrationEffect.createWaveform(mDecoder.decode(readMessage),-1));
+                    }
+
+
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
