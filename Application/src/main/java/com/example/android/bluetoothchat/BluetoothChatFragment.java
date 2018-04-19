@@ -283,8 +283,9 @@ public class BluetoothChatFragment extends Fragment {
                     String passcode = textView.getText().toString();
                     if(verifyPassCode(passcode)){
                         mEnableButton.setVisibility(View.GONE);
-                        mOutEditText.setVisibility(View.GONE);
+                        mOutEditText.setVisibility(View.VISIBLE);
                         mSendButton.setVisibility(View.VISIBLE);
+                        mVibrateButton.setVisibility(View.VISIBLE);
                         textView.setText("");
                     }else exitApp();
                 }
