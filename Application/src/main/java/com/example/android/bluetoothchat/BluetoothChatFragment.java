@@ -431,13 +431,13 @@ public class BluetoothChatFragment extends Fragment {
                     }
                     break;
                 case Constants.MESSAGE_VIBRATE:
-                    byte[] readBuff = (byte[]) msg.obj;
-
-                    // construct a string from the valid bytes in the buffer
-                    String readMessagee = new String(readBuff, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessagee);
-                    Vibrator c = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    c.vibrate(Long.parseLong(readMessagee));
+//                    byte[] readBuff = (byte[]) msg.obj;
+//
+//                    // construct a string from the valid bytes in the buffer
+//                    String readMessagee = new String(readBuff, 0, msg.arg1);
+//                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessagee);
+//                    Vibrator c = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+//                    c.vibrate(Long.parseLong(readMessagee,10));
 
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
