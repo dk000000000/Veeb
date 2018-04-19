@@ -16,15 +16,27 @@ public class Decoder {
             String word = splittedMorseCode[wordCounter];
             String[] letters = word.split("/");
 
-            for(int letterCounter = 0; letterCounter < letters.length; letterCounter++) {
-                morseDecodedTextBuffer.add(30L);
-                morseDecodedTextBuffer.add(100L);
+            for(int letterCounter = 0; letterCounter < letters.length; letterCounter++)
+            {   
+                for(int dots = 0; dots< letters[letterCounter].length();dots++){
+                if(letters[letterCounter].charAt(dots)=='-'){
+                    morseDecodedTextBuffer.add(100L);
+                }
+                else{
+                    morseDecodedTextBuffer.add(30L);
+          
+                 }
+                 
+                 if(dots==letters[letterCounter].length()-1){
+                     morseDecodedTextBuffer.add(200L);
+                    }
+                    else{
+                    morseDecodedTextBuffer.add(100L);}
+              }
+                
             }
+            
 
-            if(wordCounter != (splittedMorseCode.length - 1)) {
-                morseDecodedTextBuffer.add(100L);
-                morseDecodedTextBuffer.add(100L);
-            }
         }
         Long[] objLong = morseDecodedTextBuffer.toArray(new Long[morseDecodedTextBuffer.size()]);
         long[] primLong = new long[objLong.length];
