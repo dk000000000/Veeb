@@ -20,15 +20,15 @@ public class Decoder {
             {   
                 for(int dots = 0; dots< letters[letterCounter].length();dots++){
                 if(letters[letterCounter].charAt(dots)=='-'){
-                    morseDecodedTextBuffer.add(100L);
+                    morseDecodedTextBuffer.add(300L);
                 }
                 else{
-                    morseDecodedTextBuffer.add(30L);
+                    morseDecodedTextBuffer.add(150L);
           
                  }
                  
                  if(dots==letters[letterCounter].length()-1){
-                     morseDecodedTextBuffer.add(200L);
+                     morseDecodedTextBuffer.add(300L);
                     }
                     else{
                     morseDecodedTextBuffer.add(100L);}
