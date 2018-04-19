@@ -437,7 +437,7 @@ public class BluetoothChatFragment extends Fragment {
                     String readMessagee = new String(readBuff, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessagee);
                     Vibrator c = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    c.vibrate(Long.parseLong(readMessagee,10));
+                    c.vibrate(Long.parseLong(readMessagee));
 
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:

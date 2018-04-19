@@ -5,7 +5,7 @@ public class Encoder {
     private StringBuffer morseEncodedTextBuffer;
 
     public Encoder() {
-        morseCodeCharacterGetter = new MorseCodeCharacterGetter(Constants.MORSECODE_CONTENT_XML_PATH);
+        morseCodeCharacterGetter = new MorseCodeCharacterGetter();
     }
 
     public String encode(String unencodedText) {
