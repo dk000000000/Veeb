@@ -251,14 +251,38 @@ public class BluetoothChatFragment extends Fragment {
         mSendButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Context context = getActivity();
+                Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    down = System.currentTimeMillis();
+
+                    View view = getView();
+                    if (null != view) {
+                        TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+                        String inputText = textView.getText().toString();
+
+                        if (inputText.equals("")) {
+                            down = System.currentTimeMillis();
+                            sendMessage("1");
+                            vib.vibrate(100000L);
+                        }
+                        else {
+                            String message = "0" + inputText;
+                            mConversationArrayAdapter.add("text " + inputText);
+                            sendMessage(message);
+                            textView.setText("");
+                            down = -1;
+                        }
+                    }
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    duration = System.currentTimeMillis() - down;
-                    mConversationArrayAdapter.add("duration " + Long.toString(duration));
-                    String message = Long.toString(duration);
-                    sendMessage(message);
+                    if (down >= 0){
+                        duration = System.currentTimeMillis() - down;
+                        mConversationArrayAdapter.add("duration " + Long.toString(duration));
+                        String message = "2" + Long.toString(duration);
+                        vib.cancel();
+                        sendMessage(message);
+                    }
+
                 }
                 return true;
             }
@@ -273,7 +297,7 @@ public class BluetoothChatFragment extends Fragment {
                     String passcode = textView.getText().toString();
                     if(verifyPassCode(passcode)){
                         mEnableButton.setVisibility(View.GONE);
-                        mOutEditText.setVisibility(View.GONE);
+                        // mOutEditText.setVisibility(View.GONE);
                         mSendButton.setVisibility(View.VISIBLE);
                         textView.setText("");
                     }else exitApp();
@@ -410,10 +434,19 @@ public class BluetoothChatFragment extends Fragment {
 
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(Long.parseLong(readMessage));
+                    switch (readMessage.charAt(0)) {
+                        case '0': // Receive message to translate
+                            mConversationArrayAdapter.add(mConnectedDeviceName + ": " + readMessage.substring(1));
+                            break;
+                        case '1': // Receive start
+                            v.vibrate(100000L);
+                            break;
+                        case '2': // Receive stop
+                            mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage.substring(1));
+                            v.cancel();
+                            break;
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
