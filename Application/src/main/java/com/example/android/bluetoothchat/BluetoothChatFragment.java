@@ -421,6 +421,13 @@ public class BluetoothChatFragment extends Fragment {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT < 26) {
+                        v.vibrate(mDecoder.decode(readMessage),-1);
+                    }
+                    else{
+                        v.vibrate(VibrationEffect.createWaveform(mDecoder.decode(readMessage),-1));
+                    }
                     break;
                 case Constants.MESSAGE_VIBRATE:
                     byte[] readBuff = (byte[]) msg.obj;
@@ -428,14 +435,8 @@ public class BluetoothChatFragment extends Fragment {
                     // construct a string from the valid bytes in the buffer
                     String readMessagee = new String(readBuff, 0, msg.arg1);
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessagee);
-                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (Build.VERSION.SDK_INT < 26) {
-                        v.vibrate(mDecoder.decode(readMessagee),-1);
-                    }
-                    else{
-                        v.vibrate(VibrationEffect.createWaveform(mDecoder.decode(readMessagee),-1));
-                    }
-
+                    Vibrator c = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    c.vibrate(Long.parseLong(readMessagee,10));
 
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
