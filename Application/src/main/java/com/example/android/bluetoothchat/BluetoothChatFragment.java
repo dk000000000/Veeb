@@ -16,6 +16,7 @@
 
 package com.example.android.bluetoothchat;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -44,9 +45,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.concurrent.TimeUnit;
 
 
 import com.example.android.common.logger.Log;
+import com.example.android.common.morsecoder.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -76,6 +79,12 @@ public class BluetoothChatFragment extends Fragment {
     // Vibration duration
     long down;
     long duration;
+
+    long DOT = 100;
+    long DASH = 3 * DOT;
+
+    private static Encoder mEncoder = new Encoder();
+    private static Decoder mDecoder = new Decoder();
 
     /**
      * Name of the connected device
@@ -268,9 +277,38 @@ public class BluetoothChatFragment extends Fragment {
                         else {
                             String message = "0" + inputText;
                             mConversationArrayAdapter.add("text " + inputText);
+                            String morse = mEncoder.encode(inputText);
+                            mConversationArrayAdapter.add("morse " + morse);
                             sendMessage(message);
                             textView.setText("");
                             down = -1;
+                            for (int i = 0; i < morse.length(); i++) {
+                                switch (morse.charAt(i)) {
+                                    case '-':
+                                        vib.vibrate(DASH);
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DASH);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case '.':
+                                        vib.vibrate(DOT);
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case '/':
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
@@ -402,6 +440,7 @@ public class BluetoothChatFragment extends Fragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -427,7 +466,7 @@ public class BluetoothChatFragment extends Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    // mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
@@ -438,6 +477,35 @@ public class BluetoothChatFragment extends Fragment {
                     switch (readMessage.charAt(0)) {
                         case '0': // Receive message to translate
                             mConversationArrayAdapter.add(mConnectedDeviceName + ": " + readMessage.substring(1));
+                            String morse = mEncoder.encode(readMessage.substring(1));
+                            mConversationArrayAdapter.add(mConnectedDeviceName + ": " + morse);
+                            for (int i = 0; i < morse.length(); i++) {
+                                switch (morse.charAt(i)) {
+                                    case '-':
+                                        v.vibrate(DASH);
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DASH);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case '.':
+                                        v.vibrate(DOT);
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case '/':
+                                        try {
+                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                }
+                            }
                             break;
                         case '1': // Receive start
                             v.vibrate(100000L);
