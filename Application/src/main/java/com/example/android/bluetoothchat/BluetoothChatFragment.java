@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,8 +47,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.concurrent.TimeUnit;
-
-
+// import android.os.Build;
 import com.example.android.common.logger.Log;
 import com.example.android.common.morsecoder.*;
 
@@ -75,6 +75,7 @@ public class BluetoothChatFragment extends Fragment {
     private EditText mOutEditText;
     private Button mSendButton;
     private Button mEnableButton;
+    private Button mVibrateButton;
 
     // Vibration duration
     long down;
@@ -177,7 +178,9 @@ public class BluetoothChatFragment extends Fragment {
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mEnableButton = (Button) view.findViewById(R.id.button_enableApp);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mVibrateButton = (Button) view.findViewById(R.id.button_vibrate);
         mSendButton.setVisibility(view.GONE);
+        mVibrateButton.setVisibility(view.GONE);
     }
 
     private void newPassCode(String newPasscode){
@@ -242,22 +245,22 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
-        // Initialize the send button with a listener that for click events
-//        mSendButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                // Send a message using content of the edit text widget
-//                View view = getView();
-//                if (null != view) {
-//                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-//                    String message = textView.getText().toString();
-//                    sendMessage(message);
-//                    textView.setText("");
-//                }
-//            }
-//        });
+//         Initialize the send button with a listener that for click events
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Send a message using content of the edit text widget
+                View view = getView();
+                if (null != view) {
+                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+                    String message = mEncoder.encode(textView.getText().toString());
+                    sendMessage(Constants.MESSAGE_WRITE, message);
+                    textView.setText("");
+                }
+            }
+        });
 
         // Initialize the send button with a listener that records how long the button is held
-        mSendButton.setOnTouchListener(new View.OnTouchListener() {
+        mVibrateButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Context context = getActivity();
@@ -321,6 +324,14 @@ public class BluetoothChatFragment extends Fragment {
                         sendMessage(message);
                     }
 
+//                     down = System.currentTimeMillis();
+
+//                 }
+//                 else if (event.getAction() == MotionEvent.ACTION_UP) {
+//                     duration = System.currentTimeMillis() - down;
+//                     mConversationArrayAdapter.add("duration " + Long.toString(duration));
+//                     String message = Long.toString(duration);
+//                     sendMessage(Constants.MESSAGE_VIBRATE, message);
                 }
                 return true;
             }
@@ -336,7 +347,9 @@ public class BluetoothChatFragment extends Fragment {
                     if(verifyPassCode(passcode)){
                         mEnableButton.setVisibility(View.GONE);
                         // mOutEditText.setVisibility(View.GONE);
+//                         mOutEditText.setVisibility(View.VISIBLE);
                         mSendButton.setVisibility(View.VISIBLE);
+                        mVibrateButton.setVisibility(View.VISIBLE);
                         textView.setText("");
                     }else exitApp();
                 }
@@ -369,7 +382,7 @@ public class BluetoothChatFragment extends Fragment {
      *
      * @param message A string of text to send.
      */
-    private void sendMessage(String message) {
+    private void sendMessage(int constant, String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -380,7 +393,7 @@ public class BluetoothChatFragment extends Fragment {
         if (message.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
             byte[] send = message.getBytes();
-            mChatService.write(send);
+            mChatService.write(constant, send);
 
             // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
@@ -397,7 +410,7 @@ public class BluetoothChatFragment extends Fragment {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
-                sendMessage(message);
+                sendMessage(Constants.MESSAGE_WRITE, message);
             }
             return true;
         }
@@ -444,6 +457,7 @@ public class BluetoothChatFragment extends Fragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
             Context context = getActivity();
             FragmentActivity activity = getActivity();
             switch (msg.what) {
@@ -470,7 +484,6 @@ public class BluetoothChatFragment extends Fragment {
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -515,6 +528,26 @@ public class BluetoothChatFragment extends Fragment {
                             v.cancel();
                             break;
                     }
+// =======
+//                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+//                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+//                     if (Build.VERSION.SDK_INT < 26) {
+//                         v.vibrate(mDecoder.decode(readMessage),-1);
+//                     }
+//                     else{
+//                         v.vibrate(VibrationEffect.createWaveform(mDecoder.decode(readMessage),-1));
+//                     }
+//                     break;
+//                 case Constants.MESSAGE_VIBRATE:
+// //                    byte[] readBuff = (byte[]) msg.obj;
+// //
+// //                    // construct a string from the valid bytes in the buffer
+// //                    String readMessagee = new String(readBuff, 0, msg.arg1);
+// //                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessagee);
+// //                    Vibrator c = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// //                    c.vibrate(Long.parseLong(readMessagee,10));
+
+// >>>>>>> master
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
