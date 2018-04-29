@@ -84,7 +84,6 @@ public class BluetoothChatFragment extends Fragment {
     long DASH = 3 * DOT;
 
     private static Encoder mEncoder = new Encoder();
-    private static Decoder mDecoder = new Decoder();
 
     /**
      * Name of the connected device
@@ -242,20 +241,6 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
-        // Initialize the send button with a listener that for click events
-//        mSendButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                // Send a message using content of the edit text widget
-//                View view = getView();
-//                if (null != view) {
-//                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-//                    String message = textView.getText().toString();
-//                    sendMessage(message);
-//                    textView.setText("");
-//                }
-//            }
-//        });
-
         // Initialize the send button with a listener that records how long the button is held
         mSendButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -276,46 +261,18 @@ public class BluetoothChatFragment extends Fragment {
                         }
                         else {
                             String message = "0" + inputText;
-                            mConversationArrayAdapter.add("text " + inputText);
-                            String morse = mEncoder.encode(inputText);
-                            mConversationArrayAdapter.add("morse " + morse);
+                            mConversationArrayAdapter.add("Sent Text: " + inputText);
                             sendMessage(message);
                             textView.setText("");
                             down = -1;
-                            for (int i = 0; i < morse.length(); i++) {
-                                switch (morse.charAt(i)) {
-                                    case '-':
-                                        vib.vibrate(DASH);
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DASH);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case '.':
-                                        vib.vibrate(DOT);
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case '/':
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                }
-                            }
+
                         }
                     }
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (down >= 0){
                         duration = System.currentTimeMillis() - down;
-                        mConversationArrayAdapter.add("duration " + Long.toString(duration));
+                        mConversationArrayAdapter.add("Sent Duration: " + Long.toString(duration));
                         String message = "2" + Long.toString(duration);
                         vib.cancel();
                         sendMessage(message);
