@@ -76,6 +76,9 @@ public class BluetoothChatFragment extends Fragment {
   private Button mSendButton;
   private Button mEnableButton;
 
+  //login mechenic
+  private Passcode _passcode;
+
   // Vibration duration
   long down;
   long duration;
@@ -190,35 +193,6 @@ public class BluetoothChatFragment extends Fragment {
     }
   }
 
-  private boolean verifyPassCode(String passCode) {
-    Context context = getActivity();
-    try {
-      InputStream inputStream = context.openFileInput("passcode.txt");
-      if (inputStream != null) {
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        String receiveString = "";
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while ((receiveString = bufferedReader.readLine()) != null) {
-          stringBuilder.append(receiveString);
-        }
-
-        inputStream.close();
-        String ret = stringBuilder.toString();
-        System.out.println(ret);
-        return passCode.equals(ret);
-      }
-    } catch (FileNotFoundException e) {
-      newPassCode(passCode);
-      System.out.println("PassCode Created");
-      return true;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return true;
-  }
-
   private void exitApp() {
     Intent intent = new Intent(Intent.ACTION_MAIN);
     intent.addCategory(Intent.CATEGORY_HOME);
@@ -282,11 +256,12 @@ public class BluetoothChatFragment extends Fragment {
     mEnableButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        _passcode = new Passcode(getActivity());
         View view = getView();
         if (null != view) {
           TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-          String passcode = textView.getText().toString();
-          if (verifyPassCode(passcode)) {
+          String code = textView.getText().toString();
+          if (_passcode.verify(code)) {
             mEnableButton.setVisibility(View.GONE);
             // mOutEditText.setVisibility(View.GONE);
             mSendButton.setVisibility(View.VISIBLE);
