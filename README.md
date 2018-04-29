@@ -36,11 +36,6 @@ Pre-requisites
 - Android Build Tools v27.0.2
 - Android Support Repository
 
-Screenshots
--------------
-
-<img src="screenshots/1-launch.png" height="400" alt="Screenshot"/> <img src="screenshots/2-devices.png" height="400" alt="Screenshot"/> <img src="screenshots/3-chat.png" height="400" alt="Screenshot"/> 
-
 Getting Started
 ---------------
 
