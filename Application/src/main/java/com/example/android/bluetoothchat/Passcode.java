@@ -18,7 +18,7 @@ public class Passcode {
     Context _context;
 
     public Passcode(Context context){
-        context = _context;
+        _context = context;
     }
 
     /**
