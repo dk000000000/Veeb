@@ -276,46 +276,19 @@ public class BluetoothChatFragment extends Fragment {
                         }
                         else {
                             String message = "0" + inputText;
-                            mConversationArrayAdapter.add("text " + inputText);
-                            String morse = mEncoder.encode(inputText);
-                            mConversationArrayAdapter.add("morse " + morse);
+                            mConversationArrayAdapter.add("Sent: " + inputText);
+                            // String morse = mEncoder.encode(inputText);
+                            // mConversationArrayAdapter.add("morse " + morse);
                             sendMessage(message);
                             textView.setText("");
                             down = -1;
-                            for (int i = 0; i < morse.length(); i++) {
-                                switch (morse.charAt(i)) {
-                                    case '-':
-                                        vib.vibrate(DASH);
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DASH);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case '.':
-                                        vib.vibrate(DOT);
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case '/':
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                }
-                            }
                         }
                     }
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (down >= 0){
                         duration = System.currentTimeMillis() - down;
-                        mConversationArrayAdapter.add("duration " + Long.toString(duration));
+                        mConversationArrayAdapter.add("Sent duration: " + Long.toString(duration));
                         String message = "2" + Long.toString(duration);
                         vib.cancel();
                         sendMessage(message);
@@ -476,7 +449,7 @@ public class BluetoothChatFragment extends Fragment {
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                     switch (readMessage.charAt(0)) {
                         case '0': // Receive message to translate
-                            mConversationArrayAdapter.add(mConnectedDeviceName + ": " + readMessage.substring(1));
+                            // mConversationArrayAdapter.add(mConnectedDeviceName + ": " + readMessage.substring(1));
                             String morse = mEncoder.encode(readMessage.substring(1));
                             mConversationArrayAdapter.add(mConnectedDeviceName + ": " + morse);
                             for (int i = 0; i < morse.length(); i++) {
@@ -484,7 +457,7 @@ public class BluetoothChatFragment extends Fragment {
                                     case '-':
                                         v.vibrate(DASH);
                                         try {
-                                            TimeUnit.MILLISECONDS.sleep(DASH);
+                                            TimeUnit.MILLISECONDS.sleep(DASH + DOT);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
@@ -492,14 +465,14 @@ public class BluetoothChatFragment extends Fragment {
                                     case '.':
                                         v.vibrate(DOT);
                                         try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                            TimeUnit.MILLISECONDS.sleep(DOT + DOT);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
                                         break;
                                     case '/':
                                         try {
-                                            TimeUnit.MILLISECONDS.sleep(DOT);
+                                            TimeUnit.MILLISECONDS.sleep(DOT + DOT);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
