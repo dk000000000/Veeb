@@ -1,9 +1,8 @@
 
-Veeb
+Covert Communication
 ===================================
 
-This sample shows how to implement two-way text chat over Bluetooth between two Android devices, using
-all the fundamental Bluetooth API capabilities.
+This is Covert Communication.
 
 Introduction
 ------------
@@ -42,14 +41,9 @@ Getting Started
 This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
-Support
--------
 
-- Google+ Community: https://plus.google.com/communities/105153134372062985968
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
-
-If you've found an error in this sample, please file an issue:
-https://github.com/googlesamples/android-BluetoothChat
+If you've found an error in this Application, please file an issue:
+https://github.com/dk000000000/Veeb/issues
 
 Patches are encouraged, and may be submitted by forking this project and
 submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
