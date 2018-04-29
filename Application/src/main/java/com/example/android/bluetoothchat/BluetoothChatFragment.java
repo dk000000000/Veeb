@@ -47,7 +47,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.concurrent.TimeUnit;
 
-
 import com.example.android.common.logger.Log;
 import com.example.android.common.morsecoder.*;
 
@@ -270,14 +269,13 @@ public class BluetoothChatFragment extends Fragment {
                     }
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (down >= 0){
+                    if (down >= 0) {
                         duration = System.currentTimeMillis() - down;
                         mConversationArrayAdapter.add("Sent Duration: " + Long.toString(duration));
                         String message = "2" + Long.toString(duration);
                         vib.cancel();
                         sendMessage(message);
                     }
-
                 }
                 return true;
             }
