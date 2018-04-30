@@ -230,7 +230,7 @@ public class BluetoothChatFragment extends Fragment {
             if (inputText.equals("")) {
               down = System.currentTimeMillis();
               sendMessage("1");
-              vib.vibrate(100000L);
+              // vib.vibrate(100000L);
             } else {
               String message = "0" + inputText;
               mConversationArrayAdapter.add("Sent Text: " + inputText);
@@ -245,7 +245,7 @@ public class BluetoothChatFragment extends Fragment {
             duration = System.currentTimeMillis() - down;
             mConversationArrayAdapter.add("Sent Duration: " + Long.toString(duration));
             String message = "2" + Long.toString(duration);
-            vib.cancel();
+            // vib.cancel();
             sendMessage(message);
           }
         }
