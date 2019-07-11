@@ -3,6 +3,7 @@ Covert Communication
 ===================================
 
 This is Covert Communication.
+You install this android app on two phones, you connect two phone with bluetooth, you tap from one phone another will viberate accordingly, then you can use it to communicate with other without being noticed.
 
 Introduction
 ------------
